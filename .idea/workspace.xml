@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="165bf265-149c-4a11-895b-51b2c25908d4" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/setup.sh" beforeDir="false" afterPath="$PROJECT_DIR$/setup.sh" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -34,7 +34,7 @@
         <entry file="file://$PROJECT_DIR$/setup.sh">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="136">
-              <caret line="8" column="27" lean-forward="true" selection-start-line="8" selection-start-column="27" selection-end-line="8" selection-end-column="27" />
+              <caret line="8" column="4" selection-start-line="8" selection-start-column="4" selection-end-line="8" selection-end-column="4" />
             </state>
           </provider>
         </entry>
@@ -296,12 +296,12 @@
       <workItem from="1552836662912" duration="2500000" />
       <workItem from="1553082651514" duration="6000" />
       <workItem from="1553261113162" duration="14358000" />
-      <workItem from="1553533129073" duration="5482000" />
+      <workItem from="1553533129073" duration="5549000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="22488000" />
+    <option name="totallyTimeSpent" value="22555000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="877" extended-state="0" />
@@ -470,7 +470,7 @@
     <entry file="file://$PROJECT_DIR$/setup.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="136">
-          <caret line="8" column="27" lean-forward="true" selection-start-line="8" selection-start-column="27" selection-end-line="8" selection-end-column="27" />
+          <caret line="8" column="4" selection-start-line="8" selection-start-column="4" selection-end-line="8" selection-end-column="4" />
         </state>
       </provider>
     </entry>
