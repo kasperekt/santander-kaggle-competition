@@ -6,7 +6,7 @@ fi
 
 if [[ ! -d "data/" ]]; then
     mkdir data
-    
+
     echo "Downloading data"
     kaggle competitions download -c santander-customer-transaction-prediction -p data/
     unzip 'data/*.zip' -d data/

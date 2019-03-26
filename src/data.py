@@ -6,9 +6,7 @@ from imblearn.over_sampling import SMOTE
 from imblearn.under_sampling import EditedNearestNeighbours
 from imblearn.combine import SMOTEENN
 from sklearn.model_selection import train_test_split
-from config import n_jobs
-
-DATA_DIR = '../data'
+from config import n_jobs, DATA_DIR
 
 
 def to_data_format(df):

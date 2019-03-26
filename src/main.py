@@ -1,21 +1,14 @@
 import os
 import numpy as np
 import pandas as pd
-import datetime
 
 from data import get_data
 from model.catboost import get_model, CatboostExplorer
 from kaggle import kaggle_submit
 from params import find_params, load_params
 from argparse import ArgumentParser
-
-DATA_DIR = '../data'
-OUT_DIR = '../out'
-
-
-def current_date_str():
-    now = datetime.datetime.now()
-    return '{}-{}_{}-{}-{}'.format(now.day, now.month, now.hour, now.minute, now.second)
+from config import OUT_DIR, DATA_DIR
+from utils import current_date_str
 
 
 def submit(model):
@@ -45,9 +38,8 @@ def main(args):
     if args.explore:
         params = find_params(X_train, y_train, Explorer, eval_set=(X_val, y_val))
     else:
-        # params = {'depth': 3, 'iterations': 50000, 'l2_leaf_reg': 3.162277660168379e-19, 'learning_rate': 0.1}
         params = load_params(Explorer)
-        params['iterations'] = 75000
+        params['iterations'] = 50000
 
     if args.fake_run:
         params['iterations'] = 1

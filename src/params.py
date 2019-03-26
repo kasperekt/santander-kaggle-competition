@@ -1,7 +1,7 @@
 import pickle
 import numpy as np
 
-from sklearn.model_selection import ParameterGrid, StratifiedKFold, train_test_split
+from sklearn.model_selection import ParameterGrid, StratifiedKFold
 from model.catboost import get_model
 
 
@@ -28,10 +28,13 @@ def cross_val(X, y, params, n_splits=10, verbose=False):
 
 
 def find_params(X, y, Explorer, eval_set=None):
-    param_grid = ParameterGrid({'learning_rate': np.logspace(-2, -1, 4) * 3,
-                                'iterations': [1],
-                                'l2_leaf_reg': np.logspace(-19, -18, 3),
-                                'depth': [2, 3]})
+    param_grid = ParameterGrid({'learning_rate': [0.003, 0.03],
+                                'iterations': [10000],
+                                'loss_function': ['Logloss', 'CrossEntropy'],
+                                'l2_leaf_reg': np.logspace(-19, -15, 5),
+                                'rsm': [0.3, 0.5, 0.75, 1.0],
+                                'border_count': [128, 254],
+                                'depth': [2, 3, 4]})
 
     params_file = get_params_filepath(Explorer)
     explorer = Explorer(param_grid)
