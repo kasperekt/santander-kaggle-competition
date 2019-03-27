@@ -1,16 +1,29 @@
-from data import get_data
-from model.catboost import get_model, CatboostExplorer
+from model.dataset import Dataset
+from model.catboost import CatboostModel
+from model.lightgbm import LightGBMModel
 from params import find_params, load_params
 from argparse import ArgumentParser
 from kaggle import submit
 
+
+def pick_model(args, **params):
+    if args.model == 'catboost':
+        return CatboostModel(**params)
+    elif args.model == 'lightgbm':
+        return LightGBMModel(**params)
+    else:
+        raise ValueError('{} should be either "catboost" or "lightgbm"'.format(args.model))
+
+
 def main(args):
-    X_train, X_val, y_train, y_val = get_data(force_reload=args.force_reload, strategy=args.strategy)
+    dataset = Dataset(model=args.model,
+                      force_reload=args.force_reload,
+                      strategy=args.strategy)
 
     if args.explore:
-        params = find_params(X_train, y_train, args.explorer_type, eval_set=(X_val, y_val))
+        params = find_params(dataset, args.model)
     else:
-        params = load_params(args.explorer_type)
+        params = load_params(args.model)
         params['iterations'] = 50000
 
     if args.fake_run:
@@ -18,11 +31,8 @@ def main(args):
 
     print('Using params: ', params)
 
-    # For now, it's the "catboost" model
-    model = get_model(**params)
-
-    # train the model
-    model.fit(X_train, y_train, eval_set=(X_val, y_val))
+    model = pick_model(args, **params)
+    model.fit(dataset)
 
     # Submission
     if args.submit:
@@ -33,7 +43,7 @@ if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('--fake-run', action='store_true')
     parser.add_argument('--explore', action='store_true')
-    parser.add_argument('--explorer-type', type=str, default='catboost')
+    parser.add_argument('--model', type=str, default='catboost')
     parser.add_argument('--force-reload', action='store_true')
     parser.add_argument('--strategy', type=str, default='oversampling')
     parser.add_argument('--submit', action='store_true')

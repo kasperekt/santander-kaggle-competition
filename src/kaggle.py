@@ -19,8 +19,7 @@ def submit(model):
     test_df = pd.read_csv(os.path.join(DATA_DIR, 'test.csv'))
     X_test = np.array(test_df.iloc[:, 1:], dtype=np.float32)
 
-    predictions = np.array(model.predict_proba(X_test))
-    predictions = predictions[:, 1]
+    predictions = model.predict(X_test)
     submission = pd.DataFrame({'Id_code': test_df['ID_code'], 'target': predictions})
 
     if not os.path.exists(OUT_DIR):
