@@ -36,7 +36,7 @@ class Explorer:
                 with open(params_file, 'wb') as params_fp:
                     pickle.dump(best_params, params_fp)
 
-        results_filename = os.path.join(OUT_DIR, 'results.{}.csv'.format(current_date_str()))
+        results_filename = os.path.join(OUT_DIR, 'results.{}.{}.csv'.format(self.name, current_date_str()))
         results_df = pd.DataFrame(results)
         results_df.to_csv(results_filename, sep=",")
 
