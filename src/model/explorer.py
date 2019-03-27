@@ -1,8 +1,8 @@
 import os
 import pandas as pd
 import pickle
+import sys
 
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import roc_auc_score
 from utils import current_date_str
 from config import OUT_DIR
@@ -23,18 +23,21 @@ class Explorer:
 
         for params in self.param_grid:
             print('Testing params: ', params)
-            predictions = self.get_predictions(dataset, **params)
-            score = roc_auc_score(dataset.y_val, predictions)
-            print('Score: {}'.format(score))
+            train_predictions, val_predictions = self.get_predictions(dataset, **params)
+            train_score = roc_auc_score(dataset.y_train, train_predictions)
+            val_score = roc_auc_score(dataset.y_val, val_predictions)
+            print('Score: Train = {}; Val={}'.format(train_score, val_score))
 
-            result = {**params, 'score': score}
+            result = {**params, 'train_score': train_score, 'score': val_score}
             results.append(result)
 
-            if score > best_score:
+            if val_score > best_score:
                 best_params = params
-                best_score = score
+                best_score = val_score
                 with open(params_file, 'wb') as params_fp:
                     pickle.dump(best_params, params_fp)
+
+        sys.stdout.flush()
 
         results_filename = os.path.join(OUT_DIR, 'results.{}.{}.csv'.format(self.name, current_date_str()))
         results_df = pd.DataFrame(results)

@@ -20,9 +20,10 @@ class CatboostExplorer(Explorer):
         model = CatboostModel(**params)
         model.fit(dataset)
 
-        predictions = model.predict(dataset.X_val)
+        train_predictions = model.predict(dataset.X_train)
+        val_predictions = model.predict(dataset.X_val)
 
-        return predictions
+        return train_predictions, val_predictions
 
 
 class CatboostModel(Model):
