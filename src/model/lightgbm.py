@@ -8,45 +8,51 @@ from config import use_gpu
 
 
 class LightGBMExplorer(Explorer):
-    def __init__(self, num_round=10, **kwargs):
+    def __init__(self, **kwargs):
         super(LightGBMExplorer, self).__init__("lightgbm", **kwargs)
-        self.num_round = num_round
-        self.param_grid = ParameterGrid({'num_leaves': np.linspace(30, 255, 3, dtype=np.int),
-                                         'max_depth': [10, 15, 20],
-                                         'min_data_in_leaf': np.linspace(10, 100, 3, dtype=np.int),
-                                         'max_bin': np.linspace(100, 512, 3, dtype=np.int),
-                                         'feature_fraction': np.linspace(0.5, 1, 3),
-                                         'num_iterations': [2500],
-                                         'learning_rate': [0.03],
-                                         'objective': ['binary'],
-                                         'metric': ['auc']})
+        self.__estimator = None
+        self.param_grid = ParameterGrid({'num_leaves': [24, 32],
+                                         'min_data_in_leaf': [500],
+                                         'max_bin': [64, 128],
+                                         'feature_fraction': [0.2],
+                                         'max_depth': [20],
+                                         'reg_alpha': [1.5, 2.5],
+                                         'reg_lambda': [1.5, 2.5]})
 
     def get_predictions(self, dataset, **params):
         if use_gpu:
             params['device'] = 'gpu'
 
-        model = lgb.train(params,
-                          dataset.train_data,
-                          self.num_round,
-                          valid_sets=[dataset.val_data],
-                          verbose_eval=500,
-                          early_stopping_rounds=100)
+        model = LightGBMModel(**params)
+        model.fit(dataset)
 
-        train_predictions = model.predict(dataset.X_train, num_iteration=model.best_iteration)
-        val_predictions = model.predict(dataset.X_val, num_iteration=model.best_iteration)
+        train_predictions = model.predict(dataset.X_train)
+        val_predictions = model.predict(dataset.X_val)
 
         return train_predictions, val_predictions
 
 
 class LightGBMModel(Model):
-    def __init__(self, num_round=10, **params):
+    def __init__(self, **params):
+        if 'num_iterations' not in params:
+            params['num_iterations'] = 5000
+
+        if 'learning_rate' not in params:
+            params['learning_rate'] = 0.01
+
         super(LightGBMModel, self).__init__(**params)
-        self.num_round = num_round
-        self.model = None
+
+        self.model = lgb.LGBMClassifier(n_jobs=4,
+                                        metric='auc',
+                                        objective='binary',
+                                        **params)
 
     def fit(self, dataset):
-        self.model = lgb.train(self.params, dataset.train_data, self.num_round, valid_sets=[dataset.val_data])
+        eval_set = (dataset.X_val, dataset.y_val)
+        self.model.fit(dataset.X_train, dataset.y_train, eval_set=eval_set, early_stopping_rounds=500, verbose=100)
 
     def predict(self, X):
-        self.model.predict(X, num_iteration=self.model.best_iteration)
+        predictions = self.model.predict_proba(X, num_iteration=self.model.best_iteration_)
+        predictions = np.array(predictions, dtype=np.float)[:, 1]
+        return predictions
 
